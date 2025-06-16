@@ -8,7 +8,7 @@ def test_logging_default():
     """Test default logging configuration"""
     manager = ConfigManager("nonexistent.json")
     config = manager.config
-    
+
     # Test default values
     assert config["entity_recognition"]["use_fed_entities"] is True
     assert config["entity_recognition"]["enrich_existing_entities"] is True
@@ -35,14 +35,14 @@ def test_logging_with_config(tmp_path):
             "backup_count": 3
         }
     }
-    
+
     with open(config_path, 'w') as f:
         json.dump(test_config, f)
-    
+
     # Test loading the config
     manager = ConfigManager(str(config_path))
     config = manager.config
-    
+
     # Verify loaded values
     assert config["entity_recognition"]["use_fed_entities"] is False
     assert config["entity_recognition"]["enrich_existing_entities"] is False
@@ -60,14 +60,14 @@ def test_logging_missing_sections(tmp_path):
             "timeout_seconds": 30
         }
     }
-    
+
     with open(config_path, 'w') as f:
         json.dump(test_config, f)
-    
+
     # Test loading the config
     manager = ConfigManager(str(config_path))
     config = manager.config
-    
+
     # Verify missing sections are filled with defaults
     assert config["entity_recognition"]["use_fed_entities"] is True
     assert config["entity_recognition"]["enrich_existing_entities"] is True
@@ -82,11 +82,11 @@ def test_config_invalid_json(tmp_path):
     config_path = tmp_path / "test_config.json"
     with open(config_path, 'w') as f:
         f.write("{invalid json}")
-    
+
     # Test loading the config
     manager = ConfigManager(str(config_path))
     config = manager.config
-    
+
     # Verify defaults are used
     assert config["entity_recognition"]["use_fed_entities"] is True
     assert config["entity_recognition"]["enrich_existing_entities"] is True
@@ -98,14 +98,14 @@ def test_config_invalid_json(tmp_path):
 def test_config_get_section():
     """Test configuration section retrieval"""
     manager = ConfigManager("nonexistent.json")
-    
+
     # Test getting existing sections
     assert manager.get("entity_recognition")
     assert manager.get("monitoring")
     assert manager.get("logging")
-    
+
     # Test getting non-existent section with default
     assert manager.get("nonexistent", {"key": "value"}) == {"key": "value"}
-    
+
     # Test getting non-existent section without default
     assert manager.get("nonexistent") is None

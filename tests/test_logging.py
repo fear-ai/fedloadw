@@ -1,11 +1,9 @@
-import pytest
-import json
-import logging
 import os
 import sys
-import pytest
 import json
 import logging
+import pytest
+from datetime import datetime
 
 # Add project root to Python path
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -16,6 +14,7 @@ from scheduler import check_site, extract_entities_simple, CONFIG_FILE
 from scheduler import logger as scheduler_logger
 from main import logger as main_logger
 from fetcher import logger as fetcher_logger
+from config_manager import ConfigManager
 
 # Set up test logger
 logger = logging.getLogger('test_logger')
@@ -69,18 +68,25 @@ def test_check_site_logging(caplog):
     # Test logging in check_site function
     # Create mock entity store
     entity_store = {}
-    
+
     # Test with valid URL
     url = "https://www.example.com"
     changed, old_hash, new_hash, entities, fed_entities = check_site(url, entity_store)
-    
+
     # Verify logging
     assert any("Fetching content from" in record.message for record in caplog.records)
     assert any("Successfully fetched HTTP URL" in record.message for record in caplog.records)
-    
+
     # Test with invalid URL
     invalid_url = "invalid-url"
     changed, old_hash, new_hash, entities, fed_entities = check_site(invalid_url, entity_store)
-    
+
     # Verify error logging - the actual message is "HTTP error:" not "Error fetching HTTP URL"
     assert any("HTTP error:" in record.message for record in caplog.records)
+
+def test_logger_initialization():
+    """Test that the logger is initialized correctly."""
+    logger = setup_logging()
+    assert logger is not None
+    assert logger.level == logging.INFO
+    assert len(logger.handlers) > 0

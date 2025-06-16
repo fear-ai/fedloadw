@@ -23,19 +23,19 @@ SAFE_ROOT_DIR = os.path.abspath(os.path.join(os.getcwd(), "data"))
 
 def validate_file_path(path):
     """Validate and normalize file path to prevent path traversal attacks.
-    
+
     Args:
         path (str): File path to validate
-        
+
     Returns:
         str: Validated and normalized path
-        
+
     Raises:
         ValueError: If path is outside safe root directory
     """
     # Normalize the path to resolve any .. sequences
     normalized_path = os.path.normpath(os.path.abspath(path))
-    
+
     # Ensure the normalized path is within the safe root directory
     if not normalized_path.startswith(SAFE_ROOT_DIR):
         logger.warning(
@@ -44,15 +44,15 @@ def validate_file_path(path):
         raise ValueError(
             f"Access to path '{path}' is not allowed - outside safe directory"
         )
-    
+
     return normalized_path
 
 def fetch_page(url):
     """Fetch content from a web page, local file, or FTP server.
-    
+
     Args:
         url (str): URL, file path, or FTP URL to fetch
-        
+
     Returns:
         str: HTML content or None if failed
     """
@@ -60,9 +60,9 @@ def fetch_page(url):
         # Parse the URL to determine the protocol
         parsed_url = urlparse(url)
         scheme = parsed_url.scheme.lower() if parsed_url.scheme else ""
-        
+
         # Handle URLs in the specified order: no scheme, http, https, ftp, ftps, file
-        
+
         # 1. No scheme - try to determine if it's a local file or assume http
         if not scheme:
             logger.info(f"No scheme specified for {url}, attempting to determine source type")
@@ -76,27 +76,27 @@ def fetch_page(url):
                 logger.warning(f"Invalid file path {url}: {str(e)}")
             except Exception as e:
                 logger.debug(f"Error checking local file {url}: {str(e)}")
-            
+
             # Try to prepend http:// and fetch
             logger.info(f"URL {url} doesn't exist locally, treating as http URL")
             return fetch_http(f"http://{url}")
-        
+
         # 2. HTTP
         if scheme == "http":
             return fetch_http(url)
-        
+
         # 3. HTTPS
         if scheme == "https":
             return fetch_http(url, verify=True)
-        
+
         # 4. FTP
         if scheme == "ftp":
             return fetch_sftp(parsed_url)
-        
+
         # 5. FTPS
         if scheme == "ftps":
             return fetch_sftp(parsed_url)
-        
+
         # 6. File
         if scheme == "file":
             try:
@@ -105,7 +105,7 @@ def fetch_page(url):
             except ValueError as e:
                 logger.warning(f"Invalid file path {parsed_url.path}: {str(e)}")
                 return None
-        
+
         # If we get here, it's an unsupported protocol
         logger.warning(f"Unsupported protocol: {scheme}")
         return None
@@ -115,10 +115,10 @@ def fetch_page(url):
 
 def fetch_local_file(path):
     """Fetch content from a local file.
-    
+
     Args:
         path (str): Path to local file
-        
+
     Returns:
         str: File content or None if failed
     """
@@ -131,10 +131,10 @@ def fetch_local_file(path):
 
 def fetch_sftp(parsed_url):
     """Fetch content from an SFTP server.
-    
+
     Args:
         parsed_url (ParseResult): Parsed URL from urlparse
-        
+
     Returns:
         str: File content or None if failed
     """
@@ -142,37 +142,37 @@ def fetch_sftp(parsed_url):
         # Extract SFTP connection info
         hostname = parsed_url.netloc
         port = 22  # Default SFTP port
-        
+
         # Handle username/password if provided
         username = parsed_url.username if parsed_url.username else "anonymous"
         password = parsed_url.password if parsed_url.password else ""
-        
+
         # Create SFTP connection
         transport = paramiko.Transport((hostname, port))
         transport.connect(username=username, password=password)
         sftp = paramiko.SFTPClient.from_transport(transport)
-        
+
         # Get the remote file path
         remote_path = parsed_url.path
-        
+
         # Create a temporary file to store the content
         with tempfile.NamedTemporaryFile(delete=False) as temp_file:
             temp_path = temp_file.name
-            
+
             # Download the file
             sftp.get(remote_path, temp_path)
-            
+
         # Close SFTP connection
         sftp.close()
         transport.close()
-        
+
         # Read content from temporary file
         with open(temp_path, 'rb') as f:
             content = f.read()
-        
+
         # Clean up temporary file
         os.unlink(temp_path)
-        
+
         logger.info(f"Successfully fetched SFTP file: {parsed_url.geturl()}")
         return content
     except Exception as e:
@@ -181,11 +181,11 @@ def fetch_sftp(parsed_url):
 
 def fetch_http(url, verify=False):
     """Fetch content from HTTP/HTTPS URL.
-    
+
     Args:
         url (str): URL to fetch
         verify (bool): Whether to verify SSL certificate (default: False)
-        
+
     Returns:
         str: HTML content or None if failed
     """
@@ -200,25 +200,25 @@ def fetch_http(url, verify=False):
 
 def extract_text(html, method="trafilatura"):
     """Extract main text content from HTML.
-    
+
     Args:
         html (str): HTML content
         method (str): Method to use for extraction ('trafilatura', 'newspaper', 'bs4', or 'html2text')
-        
+
     Returns:
         str: Extracted text content
     """
     if html is None:
         return ""
-    
+
     # Method 1: Trafilatura (best for articles, blog posts)
     if method == "trafilatura":
-        text = trafilatura.extract(html, include_comments=False, include_tables=True, 
+        text = trafilatura.extract(html, include_comments=False, include_tables=True,
                                    include_links=False, include_images=False)
         if text:
             return text
         # Fall back to other methods if trafilatura fails
-    
+
     # Method 2: Newspaper3k (specialized for news articles)
     if method == "newspaper" or method == "trafilatura":
         try:
@@ -229,7 +229,7 @@ def extract_text(html, method="trafilatura"):
         except Exception as e:
             # Fall back to other methods
             logger.debug(f"Newspaper3k extraction failed: {str(e)}")
-    
+
     # Method 3: html2text (works well for most pages)
     if method == "html2text" or method in ["trafilatura", "newspaper"]:
         try:
@@ -244,50 +244,50 @@ def extract_text(html, method="trafilatura"):
         except Exception as e:
             # Fall back to BeautifulSoup
             logger.debug(f"html2text extraction failed: {str(e)}")
-    
+
     # Method 4: BeautifulSoup (fallback method)
     soup = BeautifulSoup(html, 'html.parser')
-    
+
     # Remove scripts, styles, and navigation elements
     for element in soup(["script", "style", "nav", "header", "footer", "aside"]):
         element.extract()
-    
+
     # Get text and normalize whitespace
     text = soup.get_text()
     lines = (line.strip() for line in text.splitlines())
     chunks = (phrase.strip() for line in lines for phrase in line.split("  "))
     text = '\n'.join(chunk for chunk in chunks if chunk)
-    
+
     return text
 
 def extract_main_content(url, method="trafilatura"):
     """Fetch a page and extract its main content.
-    
+
     Args:
         url (str): URL, file path, or FTP URL to fetch
         method (str): Method to use for extraction
-        
+
     Returns:
         dict: Dictionary with 'title', 'text', and 'meta' data
     """
     html = fetch_page(url)
     if not html:
         return {"title": "", "text": "", "meta": {}}
-    
+
     # Handle non-HTML files
     content_type = detect_content_type(html, url)
     if content_type != "html":
         return process_non_html_file(html, content_type, url)
-    
+
     # Extract with newspaper for structured data
     try:
         article = Article(url)
         article.set_html(html)
         article.parse()
-        
+
         # Get main text through specified method
         text = extract_text(html, method)
-        
+
         return {
             "title": article.title,
             "text": text,
@@ -304,7 +304,7 @@ def extract_main_content(url, method="trafilatura"):
         text = extract_text(html, "bs4")
         soup = BeautifulSoup(html, 'html.parser')
         title = soup.title.string if soup.title else ""
-        
+
         return {
             "title": title,
             "text": text,
@@ -313,11 +313,11 @@ def extract_main_content(url, method="trafilatura"):
 
 def detect_content_type(content, url):
     """Detect if content is HTML or another file type.
-    
+
     Args:
         content (bytes): File content
         url (str): URL or path to the file
-        
+
     Returns:
         str: Content type ('html', 'pdf', 'doc', 'text', or 'unknown')
     """
@@ -332,45 +332,45 @@ def detect_content_type(content, url):
             return "text"
         elif lower_url.endswith(('.htm', '.html')):
             return "html"
-    
+
     # Try to detect by content
     try:
         if content[:4] == b'%PDF':
             return "pdf"
         elif content[:2] in (b'\xD0\xCF', b'\x50\x4B'):  # DOC or DOCX/XLSX (zip) signatures
             return "doc"
-        
+
         # Try to detect if it's HTML content
         text_start = content[:100].decode('utf-8', errors='ignore')
         if re.search(r'<!DOCTYPE\s+html|<html', text_start, re.IGNORECASE):
             return "html"
-        
+
         # If primarily ASCII, probably text
         if all(c < 128 for c in content[:100] if c not in (9, 10, 13)):  # Ignore tab, LF, CR
             return "text"
-        
+
     except Exception as e:
         logger.debug(f"Content type detection failed: {str(e)}")
-    
+
     # Default to HTML for web URLs
     if url and url.startswith(('http://', 'https://')):
         return "html"
-    
+
     return "unknown"
 
 def process_non_html_file(content, content_type, url):
     """Process non-HTML file content.
-    
+
     Args:
         content (bytes): File content
         content_type (str): Content type from detect_content_type
         url (str): Original URL or path
-        
+
     Returns:
         dict: Dictionary with extracted content
     """
     title = os.path.basename(url) if url else "Unknown File"
-    
+
     if content_type == "text":
         # Simple text file handling
         try:
@@ -384,13 +384,13 @@ def process_non_html_file(content, content_type, url):
             }
         except Exception as e:
             logger.error(f"Error processing text file: {str(e)}")
-    
+
     elif content_type == "pdf":
         # Basic handling for PDF files
         try:
             import io
             from pdfminer.high_level import extract_text as pdf_extract_text
-            
+
             text = pdf_extract_text(io.BytesIO(content))
             return {
                 "title": title,
@@ -403,7 +403,7 @@ def process_non_html_file(content, content_type, url):
             logger.warning("PDF extraction requires pdfminer.six package")
         except Exception as e:
             logger.error(f"Error processing PDF file: {str(e)}")
-    
+
     # Return minimal information for unsupported types
     return {
         "title": title,

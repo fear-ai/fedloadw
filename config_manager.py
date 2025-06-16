@@ -1,10 +1,9 @@
 import json
-import os
-from datetime import datetime
+
 
 class ConfigManager:
     """Configuration manager to handle loading and validation"""
-    
+
     DEFAULT_CONFIG = {
         "entity_recognition": {
             "use_fed_entities": True,
@@ -19,11 +18,11 @@ class ConfigManager:
             "backup_count": 5
         }
     }
-    
+
     def __init__(self, config_path):
         self.config_path = config_path
         self.config = self._load_config()
-    
+
     def _load_config(self):
         """Load and validate configuration"""
         try:
@@ -48,7 +47,7 @@ class ConfigManager:
         except Exception as e:
             print(f"Error loading config: {e}")
             return self.DEFAULT_CONFIG
-    
+
     def get(self, section, default=None):
         """Get a configuration section with validation"""
         if section in self.config:
