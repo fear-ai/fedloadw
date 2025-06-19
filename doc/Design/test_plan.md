@@ -174,6 +174,8 @@ Test Services:
 ## 6. Test Execution
 
 ### 6.1 Pre-test Setup
+
+**Linux/Mac (Bash)**
 ```bash
 # Environment setup
 python -m venv .venv
@@ -185,8 +187,21 @@ pip install -r requirements-test.txt
 python tests/utils/setup_test_data.py
 ```
 
+**Windows (PowerShell)**
+```powershell
+# Environment setup
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+pip install -r requirements-test.txt
+
+# Test data setup
+python tests/utils/setup_test_data.py
+```
+
 ### 6.2 Test Execution
 ```bash
+# Linux/Mac (Bash) and Windows (PowerShell) - same commands
 # Run all tests
 pytest
 
@@ -201,6 +216,7 @@ pytest --cov=./ --cov-report=html
 
 ### 6.3 Post-test Actions
 ```bash
+# Linux/Mac (Bash) and Windows (PowerShell) - same commands
 # Generate reports
 pytest --cov=./ --cov-report=xml
 python tests/utils/generate_reports.py

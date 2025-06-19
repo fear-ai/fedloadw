@@ -237,9 +237,18 @@ fedloadw/
 ### Current Execution Options
 
 #### Windows Command Prompt/PowerShell (Recommended)
-```bash
+```powershell
 # In Cursor integrated terminal
 .venv\Scripts\Activate.ps1
+python scheduler.py  # For automated monitoring
+# OR
+uvicorn main:app --reload  # For API server
+```
+
+#### Linux/Mac (Bash)
+```bash
+# In terminal
+source .venv/bin/activate
 python scheduler.py  # For automated monitoring
 # OR
 uvicorn main:app --reload  # For API server

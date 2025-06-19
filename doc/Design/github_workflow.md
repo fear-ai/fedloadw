@@ -39,6 +39,7 @@
 ### Feature Development
 1. Create feature branch from develop:
    ```bash
+   # Linux/Mac (Bash) and Windows (PowerShell) - same commands
    git checkout develop
    git pull origin develop
    git checkout -b feature/your-feature-name
@@ -46,12 +47,14 @@
 
 2. Develop and commit changes:
    ```bash
+   # Linux/Mac (Bash) and Windows (PowerShell) - same commands
    git add .
    git commit -m "feat: description of changes"
    ```
 
 3. Push to remote:
    ```bash
+   # Linux/Mac (Bash) and Windows (PowerShell) - same commands
    git push -u origin feature/your-feature-name
    ```
 
@@ -62,6 +65,7 @@
 ### Release Process
 1. Create release branch:
    ```bash
+   # Linux/Mac (Bash) and Windows (PowerShell) - same commands
    git checkout develop
    git pull origin develop
    git checkout -b release/vX.Y.Z
@@ -73,12 +77,14 @@
 5. Merge to main after approval
 6. Create version tag:
    ```bash
+   # Linux/Mac (Bash) and Windows (PowerShell) - same commands
    git tag -a vX.Y.Z -m "Release vX.Y.Z"
    git push origin vX.Y.Z
    ```
 
 7. Merge back to develop:
    ```bash
+   # Linux/Mac (Bash) and Windows (PowerShell) - same commands
    git checkout develop
    git merge release/vX.Y.Z
    git push origin develop
@@ -87,6 +93,7 @@
 ### Hotfix Process
 1. Create hotfix branch:
    ```bash
+   # Linux/Mac (Bash) and Windows (PowerShell) - same commands
    git checkout main
    git pull origin main
    git checkout -b hotfix/description
@@ -94,6 +101,7 @@
 
 2. Fix the issue and commit:
    ```bash
+   # Linux/Mac (Bash) and Windows (PowerShell) - same commands
    git add .
    git commit -m "fix: description of fix"
    ```

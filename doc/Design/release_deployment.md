@@ -14,6 +14,7 @@
 ## 3. Release Process
 - Create a release branch from `develop`:
   ```bash
+  # Linux/Mac (Bash) and Windows (PowerShell) - same commands
   git checkout develop
   git pull origin develop
   git checkout -b release/vX.Y.Z
@@ -24,11 +25,13 @@
 - Merge to `main` after approval
 - Tag the release:
   ```bash
+  # Linux/Mac (Bash) and Windows (PowerShell) - same commands
   git tag -a vX.Y.Z -m "Release vX.Y.Z"
   git push origin vX.Y.Z
   ```
 - Merge release branch back to `develop`:
   ```bash
+  # Linux/Mac (Bash) and Windows (PowerShell) - same commands
   git checkout develop
   git merge release/vX.Y.Z
   git push origin develop
