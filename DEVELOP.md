@@ -17,20 +17,8 @@ This guide is for developers who need to:
 ## 🔧 Development Workflow Rules
 
 ### 1. Branch Management
-
-**Linux/Mac (Bash)**
 ```bash
-# ALWAYS verify current branch before starting work
-git branch --show-current
-
-# Work on develop branch for features
-git checkout develop
-
-# Only merge to main after testing
-```
-
-**Windows (PowerShell)**
-```powershell
+# Linux/Mac (Bash) and Windows (PowerShell) - same commands
 # ALWAYS verify current branch before starting work
 git branch --show-current
 
@@ -75,21 +63,8 @@ Get-Command python  # Should show .venv path
 - ❌ Never run Python commands without virtual environment
 
 ### 3. Testing Protocol
-
-**Linux/Mac (Bash)**
 ```bash
-# Run tests before any major changes
-python -m pytest tests/ -v
-
-# Run linting on project files only
-python -m flake8 *.py tests/ --count --select=E9,F63,F7,F82
-
-# Test Docker build (if Docker daemon running)
-docker build -t fedload:test .
-```
-
-**Windows (PowerShell)**
-```powershell
+# Linux/Mac (Bash) and Windows (PowerShell) - same commands
 # Run tests before any major changes
 python -m pytest tests/ -v
 
@@ -248,18 +223,8 @@ python -c "import json; print(json.load(open('config.json')))"
 ### 4. Common Issues and Solutions
 
 #### Issue: "Files Missing" or "Changes Lost"
-**Solution:**
-
-**Linux/Mac (Bash)**
 ```bash
-# Check if on wrong branch
-git branch --show-current
-git checkout develop
-git status
-```
-
-**Windows (PowerShell)**
-```powershell
+# Linux/Mac (Bash) and Windows (PowerShell) - same commands
 # Check if on wrong branch
 git branch --show-current
 git checkout develop
@@ -267,7 +232,6 @@ git status
 ```
 
 #### Issue: Tests Failing
-**Solution:**
 
 **Linux/Mac (Bash)**
 ```bash
@@ -286,18 +250,8 @@ python -m pytest tests/ -v --tb=short
 ```
 
 #### Issue: Docker Build Fails
-**Solution:**
-
-**Linux/Mac (Bash)**
 ```bash
-# Check Docker daemon
-docker --version
-docker info
-# Start Docker Desktop if needed
-```
-
-**Windows (PowerShell)**
-```powershell
+# Linux/Mac (Bash) and Windows (PowerShell) - same commands
 # Check Docker daemon
 docker --version
 docker info
@@ -305,7 +259,6 @@ docker info
 ```
 
 #### Issue: Import Errors
-**Solution:**
 
 **Linux/Mac (Bash)**
 ```bash
@@ -326,17 +279,8 @@ pip list
 ## 📊 Monitoring and Validation
 
 ### 1. Regular Health Checks
-
-**Linux/Mac (Bash)**
 ```bash
-# Weekly validation script
-python -m pytest tests/ -v
-python -m flake8 *.py tests/ --count --statistics
-git status --porcelain
-```
-
-**Windows (PowerShell)**
-```powershell
+# Linux/Mac (Bash) and Windows (PowerShell) - same commands
 # Weekly validation script
 python -m pytest tests/ -v
 python -m flake8 *.py tests/ --count --statistics
@@ -356,16 +300,8 @@ git status --porcelain
 - **Build time**: Docker builds should complete in reasonable time
 
 ### 3. Security Validation
-
-**Linux/Mac (Bash)**
 ```bash
-# Run security checks
-python -m bandit -r . -f json -o bandit-report.json
-python -m safety check
-```
-
-**Windows (PowerShell)**
-```powershell
+# Linux/Mac (Bash) and Windows (PowerShell) - same commands
 # Run security checks
 python -m bandit -r . -f json -o bandit-report.json
 python -m safety check
@@ -396,22 +332,8 @@ python -m safety check
 ## 🔄 Session Handoff Protocol
 
 ### At End of Session
-
-**Linux/Mac (Bash)**
 ```bash
-# Document current state
-git status > session_status.txt
-git log --oneline -10 >> session_status.txt
-python -m pytest tests/ -v --tb=short >> session_status.txt
-
-# Commit work in progress if stable
-git add .
-git commit -m "wip: session progress - [brief description]"
-git push origin develop
-```
-
-**Windows (PowerShell)**
-```powershell
+# Linux/Mac (Bash) and Windows (PowerShell) - same commands
 # Document current state
 git status > session_status.txt
 git log --oneline -10 >> session_status.txt

@@ -5,24 +5,8 @@ This guide explains how to build, run, and deploy the FedLoad application using 
 ## Quick Start
 
 ### 1. Build and Run with Docker Compose (Recommended)
-
-**Linux/Mac (Bash)**
 ```bash
-# Build and start all services
-docker-compose up --build
-
-# Run in background
-docker-compose up -d --build
-
-# View logs
-docker-compose logs -f
-
-# Stop services
-docker-compose down
-```
-
-**Windows (PowerShell)**
-```powershell
+# Linux/Mac (Bash) and Windows (PowerShell) - same commands
 # Build and start all services
 docker-compose up --build
 
@@ -238,20 +222,8 @@ spec:
 ## Monitoring and Logging
 
 ### View Logs
-
-**Linux/Mac (Bash)**
 ```bash
-# Docker Compose
-docker-compose logs -f fedload-api
-docker-compose logs -f fedload-scheduler
-
-# Docker
-docker logs -f fedload-api
-docker logs -f fedload-scheduler
-```
-
-**Windows (PowerShell)**
-```powershell
+# Linux/Mac (Bash) and Windows (PowerShell) - same commands
 # Docker Compose
 docker-compose logs -f fedload-api
 docker-compose logs -f fedload-scheduler
@@ -285,18 +257,8 @@ while ($true) {
 ```
 
 ### Resource Monitoring
-
-**Linux/Mac (Bash)**
 ```bash
-# Container stats
-docker stats fedload-api fedload-scheduler
-
-# Docker Compose stats
-docker-compose top
-```
-
-**Windows (PowerShell)**
-```powershell
+# Linux/Mac (Bash) and Windows (PowerShell) - same commands
 # Container stats
 docker stats fedload-api fedload-scheduler
 
@@ -309,16 +271,8 @@ docker-compose top
 ### Common Issues
 
 1. **Port already in use**
-
-**Linux/Mac (Bash)**
 ```bash
-# Change port in docker-compose.yml
-ports:
-  - "8001:8000"  # Use port 8001 instead
-```
-
-**Windows (PowerShell)**
-```powershell
+# Linux/Mac (Bash) and Windows (PowerShell) - same solution
 # Change port in docker-compose.yml
 ports:
   - "8001:8000"  # Use port 8001 instead
@@ -340,46 +294,22 @@ icacls data/ /grant Everyone:F /T
 ```
 
 3. **spaCy model not found**
-
-**Linux/Mac (Bash)**
 ```bash
-# Rebuild with fresh dependencies
-docker-compose build --no-cache
-```
-
-**Windows (PowerShell)**
-```powershell
+# Linux/Mac (Bash) and Windows (PowerShell) - same commands
 # Rebuild with fresh dependencies
 docker-compose build --no-cache
 ```
 
 4. **Configuration not loading**
-
-**Linux/Mac (Bash)**
 ```bash
-# Check volume mount
-docker-compose exec fedload-api ls -la /app/config.json
-```
-
-**Windows (PowerShell)**
-```powershell
+# Linux/Mac (Bash) and Windows (PowerShell) - same commands
 # Check volume mount
 docker-compose exec fedload-api ls -la /app/config.json
 ```
 
 ### Debug Mode
-
-**Linux/Mac (Bash)**
 ```bash
-# Run with debug logging
-docker-compose run --rm fedload-api python main.py --debug
-
-# Interactive shell
-docker-compose exec fedload-api bash
-```
-
-**Windows (PowerShell)**
-```powershell
+# Linux/Mac (Bash) and Windows (PowerShell) - same commands
 # Run with debug logging
 docker-compose run --rm fedload-api python main.py --debug
 

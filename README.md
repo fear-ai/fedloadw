@@ -56,7 +56,7 @@ flowchart LR
 
 ### Installation
 
-#### Linux/Mac (Bash)
+**Linux/Mac (Bash)**
 ```bash
 git clone <this-repo>
 cd fedload
@@ -66,7 +66,7 @@ pip install -r requirements.txt
 python -m spacy download en_core_web_sm
 ```
 
-#### Windows (PowerShell)
+**Windows (PowerShell)**
 ```powershell
 git clone <this-repo>
 cd fedload
@@ -79,31 +79,17 @@ python -m spacy download en_core_web_sm
 ### Basic Usage
 
 #### Start API Server
-
-**Linux/Mac (Bash)**
 ```bash
+# Linux/Mac (Bash) and Windows (PowerShell) - same command
 uvicorn main:app --reload
 ```
-
-**Windows (PowerShell)**
-```powershell
-uvicorn main:app --reload
-```
-
 Access interactive documentation at: http://127.0.0.1:8000/docs
 
 #### Start Automated Monitoring
-
-**Linux/Mac (Bash)**
 ```bash
+# Linux/Mac (Bash) and Windows (PowerShell) - same command
 python scheduler.py
 ```
-
-**Windows (PowerShell)**
-```powershell
-python scheduler.py
-```
-
 The scheduler will check sites every 30 minutes (configurable) and generate daily reports.
 
 ## 📊 API Endpoints
@@ -228,7 +214,7 @@ When enabled, the system tracks:
 ## 📋 System Requirements
 
 - **Python**: 3.12+ recommended
-- **Memory**: 512MB minimum (2GB+ recommended with NER enabled)
+- **Memory**: 4GB minimum (2GB+ recommended with NER enabled)
 - **Storage**: 1GB for logs and data files
 - **Network**: Reliable internet connection for Federal Reserve sites
 
