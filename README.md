@@ -55,13 +55,23 @@ flowchart LR
 ## 🚀 Quick Start
 
 ### Installation
+
+#### Linux/Mac (Bash)
 ```bash
 git clone <this-repo>
 cd fedload
 python3 -m venv .venv
-source .venv/bin/activate  # Linux/Mac
-# OR
-.venv\Scripts\Activate.ps1  # Windows
+source .venv/bin/activate
+pip install -r requirements.txt
+python -m spacy download en_core_web_sm
+```
+
+#### Windows (PowerShell)
+```powershell
+git clone <this-repo>
+cd fedload
+python -m venv .venv
+.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python -m spacy download en_core_web_sm
 ```
@@ -69,15 +79,31 @@ python -m spacy download en_core_web_sm
 ### Basic Usage
 
 #### Start API Server
+
+**Linux/Mac (Bash)**
 ```bash
 uvicorn main:app --reload
 ```
+
+**Windows (PowerShell)**
+```powershell
+uvicorn main:app --reload
+```
+
 Access interactive documentation at: http://127.0.0.1:8000/docs
 
 #### Start Automated Monitoring
+
+**Linux/Mac (Bash)**
 ```bash
 python scheduler.py
 ```
+
+**Windows (PowerShell)**
+```powershell
+python scheduler.py
+```
+
 The scheduler will check sites every 30 minutes (configurable) and generate daily reports.
 
 ## 📊 API Endpoints
@@ -92,8 +118,15 @@ The scheduler will check sites every 30 minutes (configurable) and generate dail
 | `/config` | GET | View current configuration |
 
 **Example**: Check Federal Reserve website
+
+**Linux/Mac (Bash)**
 ```bash
 curl "http://127.0.0.1:8000/check?url=https://www.federalreserve.gov/"
+```
+
+**Windows (PowerShell)**
+```powershell
+Invoke-RestMethod -Uri "http://127.0.0.1:8000/check?url=https://www.federalreserve.gov/"
 ```
 
 ## 📁 Data Files

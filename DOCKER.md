@@ -6,7 +6,23 @@ This guide explains how to build, run, and deploy the FedLoad application using 
 
 ### 1. Build and Run with Docker Compose (Recommended)
 
+**Linux/Mac (Bash)**
 ```bash
+# Build and start all services
+docker-compose up --build
+
+# Run in background
+docker-compose up -d --build
+
+# View logs
+docker-compose logs -f
+
+# Stop services
+docker-compose down
+```
+
+**Windows (PowerShell)**
+```powershell
 # Build and start all services
 docker-compose up --build
 
@@ -27,6 +43,7 @@ The application will be available at:
 
 ### 2. Manual Docker Build
 
+**Linux/Mac (Bash)**
 ```bash
 # Build the image
 docker build -t fedload:latest .
@@ -46,6 +63,29 @@ docker run -d \
   -v $(pwd)/config.json:/app/config.json:ro \
   -v $(pwd)/fed_entities.json:/app/fed_entities.json:ro \
   -v fedload-logs:/app/logs \
+  fedload:latest python scheduler.py
+```
+
+**Windows (PowerShell)**
+```powershell
+# Build the image
+docker build -t fedload:latest .
+
+# Run API server
+docker run -d `
+  --name fedload-api `
+  -p 8000:8000 `
+  -v ${PWD}/config.json:/app/config.json:ro `
+  -v ${PWD}/fed_entities.json:/app/fed_entities.json:ro `
+  -v fedload-logs:/app/logs `
+  fedload:latest
+
+# Run scheduler
+docker run -d `
+  --name fedload-scheduler `
+  -v ${PWD}/config.json:/app/config.json:ro `
+  -v ${PWD}/fed_entities.json:/app/fed_entities.json:ro `
+  -v fedload-logs:/app/logs `
   fedload:latest python scheduler.py
 ```
 
@@ -199,7 +239,19 @@ spec:
 
 ### View Logs
 
+**Linux/Mac (Bash)**
 ```bash
+# Docker Compose
+docker-compose logs -f fedload-api
+docker-compose logs -f fedload-scheduler
+
+# Docker
+docker logs -f fedload-api
+docker logs -f fedload-scheduler
+```
+
+**Windows (PowerShell)**
+```powershell
 # Docker Compose
 docker-compose logs -f fedload-api
 docker-compose logs -f fedload-scheduler
@@ -211,6 +263,7 @@ docker logs -f fedload-scheduler
 
 ### Health Monitoring
 
+**Linux/Mac (Bash)**
 ```bash
 # Check health
 curl http://localhost:8000/health
@@ -219,9 +272,31 @@ curl http://localhost:8000/health
 watch -n 5 'curl -s http://localhost:8000/health | jq'
 ```
 
+**Windows (PowerShell)**
+```powershell
+# Check health
+Invoke-RestMethod -Uri http://localhost:8000/health
+
+# Monitor with loop
+while ($true) { 
+    Invoke-RestMethod -Uri http://localhost:8000/health | ConvertTo-Json; 
+    Start-Sleep -Seconds 5 
+}
+```
+
 ### Resource Monitoring
 
+**Linux/Mac (Bash)**
 ```bash
+# Container stats
+docker stats fedload-api fedload-scheduler
+
+# Docker Compose stats
+docker-compose top
+```
+
+**Windows (PowerShell)**
+```powershell
 # Container stats
 docker stats fedload-api fedload-scheduler
 
@@ -234,33 +309,77 @@ docker-compose top
 ### Common Issues
 
 1. **Port already in use**
-   ```bash
-   # Change port in docker-compose.yml
-   ports:
-     - "8001:8000"  # Use port 8001 instead
-   ```
+
+**Linux/Mac (Bash)**
+```bash
+# Change port in docker-compose.yml
+ports:
+  - "8001:8000"  # Use port 8001 instead
+```
+
+**Windows (PowerShell)**
+```powershell
+# Change port in docker-compose.yml
+ports:
+  - "8001:8000"  # Use port 8001 instead
+```
 
 2. **Permission denied on volumes**
-   ```bash
-   # Fix permissions
-   sudo chown -R 1000:1000 logs/ data/
-   ```
+
+**Linux/Mac (Bash)**
+```bash
+# Fix permissions
+sudo chown -R 1000:1000 logs/ data/
+```
+
+**Windows (PowerShell)**
+```powershell
+# Fix permissions (run as Administrator)
+icacls logs/ /grant Everyone:F /T
+icacls data/ /grant Everyone:F /T
+```
 
 3. **spaCy model not found**
-   ```bash
-   # Rebuild with fresh dependencies
-   docker-compose build --no-cache
-   ```
+
+**Linux/Mac (Bash)**
+```bash
+# Rebuild with fresh dependencies
+docker-compose build --no-cache
+```
+
+**Windows (PowerShell)**
+```powershell
+# Rebuild with fresh dependencies
+docker-compose build --no-cache
+```
 
 4. **Configuration not loading**
-   ```bash
-   # Check volume mount
-   docker-compose exec fedload-api ls -la /app/config.json
-   ```
+
+**Linux/Mac (Bash)**
+```bash
+# Check volume mount
+docker-compose exec fedload-api ls -la /app/config.json
+```
+
+**Windows (PowerShell)**
+```powershell
+# Check volume mount
+docker-compose exec fedload-api ls -la /app/config.json
+```
 
 ### Debug Mode
 
+**Linux/Mac (Bash)**
 ```bash
+# Run with debug logging
+docker-compose run --rm fedload-api python main.py --debug
+
+# Interactive shell
+docker-compose exec fedload-api bash
+```
+
+**Windows (PowerShell)**
+```powershell
 # Run with debug logging
 docker-compose run --rm fedload-api python main.py --debug
 
@@ -330,6 +449,7 @@ environment:
 
 ### Data Backup
 
+**Linux/Mac (Bash)**
 ```bash
 # Backup volumes
 docker run --rm -v fedload-data:/data -v $(pwd):/backup alpine tar czf /backup/fedload-data.tar.gz -C /data .
@@ -338,13 +458,31 @@ docker run --rm -v fedload-data:/data -v $(pwd):/backup alpine tar czf /backup/f
 docker run --rm -v fedload-data:/data -v $(pwd):/backup alpine tar xzf /backup/fedload-data.tar.gz -C /data
 ```
 
+**Windows (PowerShell)**
+```powershell
+# Backup volumes
+docker run --rm -v fedload-data:/data -v ${PWD}:/backup alpine tar czf /backup/fedload-data.tar.gz -C /data .
+
+# Restore volumes
+docker run --rm -v fedload-data:/data -v ${PWD}:/backup alpine tar xzf /backup/fedload-data.tar.gz -C /data
+```
+
 ### Configuration Backup
 
+**Linux/Mac (Bash)**
 ```bash
 # Backup configuration
 cp config.json config.json.bak
 cp fed_entities.json fed_entities.json.bak
 cp tracked_sites.json tracked_sites.json.bak
+```
+
+**Windows (PowerShell)**
+```powershell
+# Backup configuration
+Copy-Item config.json config.json.bak
+Copy-Item fed_entities.json fed_entities.json.bak
+Copy-Item tracked_sites.json tracked_sites.json.bak
 ```
 
 ## 🏗️ Architecture Overview
